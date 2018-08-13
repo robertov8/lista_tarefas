@@ -35,7 +35,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List _todoList = [{'title': 'Roberto', 'ok': true}, {'title': 'Ribeiro', 'ok': false}];
+  List _todoList = [];
+  final _toDoController = TextEditingController();
+
+  void _addTodo() {
+    Map<String, dynamic> newTodo = Map();
+    newTodo['title'] = _toDoController.text;
+    _toDoController.text = '';
+    newTodo['ok'] = false;
+
+    setState(() {
+      _todoList.add(newTodo);
+    });
+  }
 
   Future<File> _getFile() async {
     final directory = await getApplicationDocumentsDirectory();
@@ -76,9 +88,10 @@ class _HomeState extends State<Home> {
                   decoration: InputDecoration(
                       labelText: 'Nova Tarefa',
                       labelStyle: TextStyle(color: Colors.blueAccent)),
+                  controller: _toDoController,
                 )),
                 RaisedButton(
-                  onPressed: () {},
+                  onPressed: _addTodo,
                   color: Colors.blueAccent,
                   child: Text('ADD'),
                   textColor: Colors.white,
@@ -95,10 +108,14 @@ class _HomeState extends State<Home> {
                       title: Text(_todoList[index]['title']),
                       value: _todoList[index]['ok'],
                       secondary: CircleAvatar(
-                        child: Icon(_todoList[index]['ok']
-                            ? Icons.check
-                            : Icons.error),
+                        child: Icon(
+                            _todoList[index]['ok'] ? Icons.check : Icons.error),
                       ),
+                      onChanged: (c) {
+                        setState(() {
+                          _todoList[index]['ok'] = c;
+                        });
+                      },
                     );
                   }))
         ],
